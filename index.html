@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>NEXUS MM SERVICES</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<style>
+
+/* ================= RESET ================= */
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Orbitron',sans-serif;
+  background:#020617;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* ================= SPACE BACKGROUND ================= */
+body::before{
+  content:"";
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:
+    radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 70% 80%, #c084fc, transparent),
+    radial-gradient(1px 1px at 40% 60%, #fff, transparent),
+    radial-gradient(2px 2px at 90% 20%, #a855f7, transparent),
+    radial-gradient(1px 1px at 10% 90%, #fff, transparent);
+  background-repeat:repeat;
+  animation:starsMove 80s linear infinite;
+  z-index:-2;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(168,85,247,0.3), transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(139,92,246,0.2), transparent 60%);
+  animation:nebula 25s ease-in-out infinite;
+  z-index:-1;
+}
+
+@keyframes starsMove{
+  from{background-position:0 0;}
+  to{background-position:1500px 1500px;}
+}
+
+@keyframes nebula{
+  0%{opacity:0.4;}
+  50%{opacity:0.9;}
+  100%{opacity:0.4;}
+}
+
+/* ================= TITLE ================= */
+.banner{
+  text-align:center;
+  padding:40px 20px;
+}
+
+.title{
+  font-size:42px;
+  letter-spacing:5px;
+  background:linear-gradient(90deg,#c084fc,#ffffff,#c084fc);
+  background-size:200%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shine 3s linear infinite, glow 2s infinite;
+}
+
+@keyframes shine{
+  to{background-position:200%;}
+}
+
+@keyframes glow{
+  0%{text-shadow:0 0 10px #a855f7;}
+  50%{text-shadow:0 0 40px #c084fc;}
+  100%{text-shadow:0 0 10px #a855f7;}
+}
+
+/* ================= ANIME LOGO ================= */
+.logo{
+  margin:20px auto;
+  width:120px;
+  height:120px;
+}
+
+.logo svg{
+  width:100%;
+  filter:drop-shadow(0 0 15px #a855f7);
+  animation:spin 10s linear infinite;
+}
+
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+/* ================= CARDS ================= */
+.card{
+  margin:15px;
+  padding:20px;
+  border-radius:18px;
+  background:rgba(15,23,42,0.7);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(168,85,247,0.3);
+  box-shadow:0 0 30px rgba(168,85,247,0.4);
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:scale(1.02);
+}
+
+/* ================= INPUT ================= */
+input,textarea{
+  width:95%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:12px;
+  border:none;
+  background:#111827;
+  color:white;
+}
+
+/* ================= BUTTONS ================= */
+.btns{display:flex;gap:10px;}
+
+button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{transform:scale(1.08);}
+
+.legit{background:#22c55e;}
+.neutral{background:#eab308;color:black;}
+.scam{background:#ef4444;}
+.join{background:#7c3aed; box-shadow:0 0 20px #a855f7;}
+
+/* ================= STATS ================= */
+.bar{
+  height:12px;
+  background:#111;
+  border-radius:10px;
+  overflow:hidden;
+  margin:6px 0;
+}
+
+.fill{height:100%; transition:0.5s;}
+
+#legitBar{background:#22c55e;}
+#neutralBar{background:#eab308;}
+#scamBar{background:#ef4444;}
+
+/* ================= REVIEWS ================= */
+.review{
+  background:#020617;
+  margin:10px 0;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #7c3aed;
+}
+/* ===== PROOF SECTION ===== */
+.proof-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:10px;
+}
+
+.proof-grid img{
+  width:100%;
+  border-radius:10px;
+  border:1px solid #7c3aed;
+  transition:0.3s;
+}
+
+.proof-grid img:hover{
+  transform:scale(1.1);
+}
+
+/* ===== HEXAGON UPGRADE ===== */
+.logo svg{
+  animation:spin 10s linear infinite, glowHex 2s infinite alternate;
+}
+
+@keyframes glowHex{
+  from{filter:drop-shadow(0 0 10px #a855f7);}
+  to{filter:drop-shadow(0 0 35px #c084fc);}
+}
+
+/* center energy core */
+.hex-core{
+  position:absolute;
+  width:40px;
+  height:40px;
+  background:radial-gradient(circle,#c084fc,#7c3aed);
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 30px #a855f7;
+  animation:pulseCore 2s infinite;
+}
+
+@keyframes pulseCore{
+  0%{transform:translate(-50%,-50%) scale(1);}
+  50%{transform:translate(-50%,-50%) scale(1.2);}
+  100%{transform:translate(-50%,-50%) scale(1);}
+}
+
+/* ===== ANIME CHARACTER (CSS STYLE) ===== */
+.anime-char{
+  position:fixed;
+  right:10px;
+  bottom:0;
+  width:120px;
+  height:200px;
+  background:linear-gradient(to top,#7c3aed,transparent);
+  border-radius:50% 50% 0 0;
+  opacity:0.3;
+  filter:blur(1px);
+  animation:floatChar 6s ease-in-out infinite;
+}
+
+@keyframes floatChar{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-20px);}
+  100%{transform:translateY(0);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="banner">
+  <div class="title">NEXUS MM SERVICES</div>
+</div>
+
+<!-- LOGO -->
+<div class="logo" style="position:relative;">
+  <svg viewBox="0 0 100 100">
+    <polygon points="50,5 90,25 90,75 50,95 10,75 10,25"
+      fill="none" stroke="#c084fc" stroke-width="3"/>
+  </svg>
+
+  <div class="hex-core"></div>
+</div>
+<!-- JOIN -->
+<div class="card">
+<button class="join" onclick="joinServer()">JOIN DISCORD</button>
+</div>
+
+<!-- VOTE -->
+<div class="card">
+<h2>Vote</h2>
+
+<input id="user" placeholder="Username">
+<textarea id="msg" placeholder="Review"></textarea>
+
+<div class="btns">
+<button class="legit" onclick="vote('Legit')">Legit</button>
+<button class="neutral" onclick="vote('Neutral')">Neutral</button>
+<button class="scam" onclick="vote('Scam')">Scam</button>
+</div>
+
+<h3 id="status"></h3>
+</div>
+
+<!-- STATS -->
+<div class="card">
+<h2>Stats</h2>
+
+<div id="legitCount">0</div>
+<div id="neutralCount">0</div>
+<div id="scamCount">0</div>
+
+<div class="bar"><div id="legitBar" class="fill"></div></div>
+<div class="bar"><div id="neutralBar" class="fill"></div></div>
+<div class="bar"><div id="scamBar" class="fill"></div></div>
+</div>
+
+<!-- REVIEWS -->
+<div class="card">
+<h2>Reviews</h2>
+<div id="reviews"></div>
+</div>
+<div class="card">
+  <h2>Proof</h2>
+
+  <input type="file" id="proofUpload" accept="image/*">
+  <div class="proof-grid" id="proofGrid"></div>
+</div>
+<script>
+const firebaseConfig={
+apiKey:"YOUR_KEY",
+authDomain:"YOUR_DOMAIN",
+projectId:"YOUR_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+function vote(type){
+let user=document.getElementById("user").value;
+let msg=document.getElementById("msg").value;
+if(!user) return alert("Enter username");
+
+db.collection("votes").add({user,type,msg,time:Date.now()});
+document.getElementById("status").innerText="Submitted";
+}
+
+function load(){
+db.collection("votes").onSnapshot(s=>{
+let html="",l=0,n=0,sC=0;
+
+s.forEach(d=>{
+let v=d.data();
+if(v.type==="Legit") l++;
+if(v.type==="Neutral") n++;
+if(v.type==="Scam") sC++;
+
+html+=`<div class="review"><b>${v.user}</b><br>${v.msg}</div>`;
+});
+
+let t=l+n+sC||1;
+
+legitCount.innerText=l;
+neutralCount.innerText=n;
+scamCount.innerText=sC;
+
+legitBar.style.width=(l/t*100)+"%";
+neutralBar.style.width=(n/t*100)+"%";
+scamBar.style.width=(sC/t*100)+"%";
+
+reviews.innerHTML=html;
+});
+}
+
+function joinServer(){
+window.open("https://discord.gg/YOUR-LINK","_blank");
+}
+
+load();
+</script>
+<script>
+const proofInput = document.getElementById("proofUpload");
+const proofGrid = document.getElementById("proofGrid");
+
+if(proofInput){
+  proofInput.addEventListener("change", function(){
+    const file = this.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const img = document.createElement("img");
+      img.src = e.target.result;
+      proofGrid.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+</script>
+</body>
+</html>
